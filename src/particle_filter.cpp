@@ -71,7 +71,6 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	normal_distribution<double> dist_theta(0, std_pos[2]);
 
 	for(int i = 0; i < num_particles; i++) {
-
 		if(fabs(yaw_rate) < 0.00001) {  
 			particles[i].x += velocity * delta_t * cos(particles[i].theta);
 			particles[i].y += velocity * delta_t * sin(particles[i].theta);
@@ -97,16 +96,12 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 	//   implement this method and use it as a helper during the updateWeights phase.
 
 	for(unsigned int i = 0; i < observations.size(); i++) {
-    
 		unsigned int nObs = observations.size();
 		unsigned int nPred = predicted.size();
-
 		for(unsigned int i = 0; i < nObs; i++) { // For each observation
-
 			double minDist = numeric_limits<double>::max();
 			int mapId = -1;
 			for(unsigned j = 0; j < nPred; j++ ) { // For each predition.
-
 				double xDist = observations[i].x - predicted[j].x;
 				double yDist = observations[i].y - predicted[j].y;
 				double distance = xDist * xDist + yDist * yDist;
@@ -137,7 +132,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 	//Each particle for loop
 	for(int i = 0; i < num_particles; i++) {
-
 		double paricle_x = particles[i].x;
 		double paricle_y = particles[i].y;
 		double paricle_theta = particles[i].theta;
@@ -171,15 +165,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		dataAssociation(predictions, trans_os);
 		particles[i].weight = 1.0;
 		for(unsigned int j = 0; j < trans_os.size(); j++) {
-		
 			double o_x, o_y, pr_x, pr_y;
 			o_x = trans_os[j].x;
 			o_y = trans_os[j].y;
-			int associated_prediction = trans_os[j].id;
+			int asso_prediction = trans_os[j].id;
 
 			//x,y coordinates of the prediction associated with the current observation
 			for(unsigned int k = 0; k < predictions.size(); k++) {
-				if(predictions[k].id == associated_prediction) {
+				if(predictions[k].id == asso_prediction) {
 					pr_x = predictions[k].x;
 					pr_y = predictions[k].y;
 				}
