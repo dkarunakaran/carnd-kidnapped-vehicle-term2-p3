@@ -105,8 +105,6 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 				double xDist = observations[i].x - predicted[j].x;
 				double yDist = observations[i].y - predicted[j].y;
 				double distance = xDist * xDist + yDist * yDist;
-
-				//If the "distance" is less than min, stored the id and update min.
 				if(distance < minDist) {
 					minDist = distance;
 					mapId = predicted[j].id;
