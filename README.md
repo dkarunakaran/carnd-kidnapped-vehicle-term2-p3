@@ -1,32 +1,25 @@
 This is the particle filter project. If you want to know the localisation from scratch please visit my article in medium.
 
 ```
-if(is_initialized) {
-	return;
-} 
+//Normal distributions for sensor noise
+normal_distribution<double> dist_x(0, std_pos[0]);
+normal_distribution<double> dist_y(0, std_pos[1]);
+normal_distribution<double> dist_theta(0, std_pos[2]);
 
-//Number of particles
-num_particles = 100;
-
-//SD
-double std_x = std[0];
-double std_y = std[1];
-double std_theta = std[2];
-
-//Normal distributions
-normal_distribution<double> dist_x(x, std_x);
-normal_distribution<double> dist_y(y, std_y);
-normal_distribution<double> dist_theta(theta, std_theta);
-
-//Generate particles with normal distribution with mean on GPS values.
 for(int i = 0; i < num_particles; i++) {
-	Particle p;
-	p.id = i;
-	p.x = dist_x(gen);
-	p.y = dist_y(gen);
-	p.theta = dist_theta(gen);
-	p.weight = 1.0;
-	particles.push_back(p);
+	if(fabs(yaw_rate) < 0.00001) {  
+		particles[i].x += velocity * delta_t * cos(particles[i].theta);
+		particles[i].y += velocity * delta_t * sin(particles[i].theta);
+	} 
+	else{
+		particles[i].x += velocity / yaw_rate * (sin(particles[i].theta + yaw_rate*delta_t) - sin(particles[i].theta));
+		particles[i].y += velocity / yaw_rate * (cos(particles[i].theta) - cos(particles[i].theta + yaw_rate*delta_t));
+		particles[i].theta += yaw_rate * delta_t;
+	}
+
+	//Noise
+	particles[i].x += dist_x(gen);
+	particles[i].y += dist_y(gen);
+	particles[i].theta += dist_theta(gen);
 }
-is_initialized = true;
 ```
